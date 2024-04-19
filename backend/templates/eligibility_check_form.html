@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eligibility Check Form</title>
+
+    <!-- Bootstrap CSS link -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            margin-top: 50px;
+            max-width: 600px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #007bff;
+            text-align: center;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .result-message {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .result-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .result-icon.success {
+            color: #28a745;
+        }
+
+        .result-icon.error {
+            color: #dc3545;
+        }
+
+        /* Additional styling for displaying MongoDB data */
+        #eligibilityCriteriaSection {
+            margin-top: 20px;
+        }
+
+        #eligibilityCriteriaList {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #eligibilityCriteriaList li {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Content Section -->
+    <div class="container">
+        <h2>Eligibility Check Form</h2>
+        <form action="/get_eligibility_criteria" method="post" id="getEligibilityCriteriaForm">
+            <div class="form-group">
+                <label for="scheme_name">Scheme Name:</label>
+                <input type="text" class="form-control" id="scheme_name" name="scheme_name" required>
+            </div>
+
+            <!-- Display Eligibility Criteria dynamically -->
+            <div id="eligibilityCriteriaSection" style="display: none;">
+                <h4>MongoDB Eligibility Criteria:</h4>
+                <ul id="eligibilityCriteriaList"></ul>
+            </div>
+
+            <button type="button" class="btn btn-primary" onclick="getEligibilityCriteria()">Get Eligibility Criteria</button>
+
+            <!-- Display Eligibility Result -->
+            <div class="result-message" id="eligibilityResult"></div>
+        </form>
+    </div>
+
+    <!-- Bootstrap JS scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.9/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        // Function to display eligibility criteria dynamically
+        function displayEligibilityCriteria(eligibilityCriteria) {
+            const eligibilityCriteriaSection = document.getElementById('eligibilityCriteriaSection');
+            const eligibilityCriteriaList = document.getElementById('eligibilityCriteriaList');
+
+            // Clear previous data
+            eligibilityCriteriaList.innerHTML = '';
+
+            // Display eligibility criteria
+            for (const field in eligibilityCriteria) {
+                const listItem = document.createElement('li');
+                listItem.textContent = `${field}: ${eligibilityCriteria[field]}`;
+                eligibilityCriteriaList.appendChild(listItem);
+            }
+
+            // Show the section
+            eligibilityCriteriaSection.style.display = 'block';
+        }
+
+        // Function to handle scheme name input
+        function getEligibilityCriteria() {
+            const schemeName = document.getElementById('scheme_name').value;
+
+            // Log the scheme name to the console
+            console.log('Scheme Name:', schemeName);
+
+            // Send a POST request to /get_eligibility_criteria endpoint
+            fetch('/get_eligibility_criteria', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    'scheme_name': schemeName,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Log the response data to the console
+                console.log('Response Data:', data);
+
+                // Display eligibility criteria dynamically
+                displayEligibilityCriteria(data);
+            })
+            .catch(error => {
+                console.error('Error getting eligibility criteria:', error);
+            });
+        }
+    </script>
+</body>
+
+</html>

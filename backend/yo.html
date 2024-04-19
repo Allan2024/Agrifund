@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webpage Translator</title>
+</head>
+<body>
+    <h1>Translate Webpage</h1>
+
+    <label for="targetLanguage">Select Target Language:</label>
+    <select id="targetLanguage">
+        <option value="en">English</option>
+        <option value="fr">French</option>
+        <option value="es">Spanish</option>
+        <!-- Add more language options as needed -->
+    </select>
+
+    <button onclick="translateWebpage()">Translate</button>
+
+    <div id="translatedContent">
+        <!-- Translated content will be displayed here -->
+    </div>
+
+    <script>
+        async function translateWebpage() {
+            const targetLanguage = document.getElementById('targetLanguage').value;
+            const translatedContent = document.getElementById('translatedContent');
+
+            // Fetch the HTML content of the current webpage
+            const htmlContent = document.documentElement.outerHTML;
+
+            // Make a request to the local server for translation
+            const translationResult = await fetchTranslation(htmlContent, targetLanguage);
+
+            // Update the translated content on the webpage
+            translatedContent.innerHTML = translationResult;
+        }
+
+        async function fetchTranslation(content, targetLanguage) {
+            // Make a request to the local server
+            const response = await fetch('http://localhost:8000/translate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    content,
+                    targetLanguage,
+                }),
+            });
+
+            if (!response.ok) {
+                console.error('Translation request failed:', response.statusText);
+                return 'Translation failed';
+            }
+
+            // Parse the JSON response
+            const result = await response.json();
+
+            // Extract the translated content from the response
+            const translatedContent = result.translatedContent;
+
+            return translatedContent;
+        }
+    </script>
+</body>
+</html>

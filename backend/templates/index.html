@@ -1,0 +1,125 @@
+<!-- index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Scheme Recommender</title>
+</head>
+<body>
+    <div id="chat-container" class="chat-container">
+        <div class="message welcome-message">
+            <strong>Bot:</strong> Welcome to Scheme Recommender! Ask me about agricultural schemes.
+        </div>
+
+        <div class="message help-message">
+            <strong>Bot:</strong> You can ask for schemes related to specific keywords (e.g., irrigation, subsidies).
+        </div>
+    </div>
+
+    <div class="input-container">
+        <form id="chat-form">
+            <input type="text" id="user-input" placeholder="Type your message...">
+            <button type="submit">Send</button>
+        </form>
+    </div>
+
+
+    <!-- ... (existing code) -->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const chatForm = document.getElementById('chat-form');
+            const chatContainer = document.querySelector('.chat-container');
+
+            chatForm.addEventListener('submit', async function (event) {
+                event.preventDefault();
+
+                const userInput = document.getElementById('user-input').value;
+
+                if (userInput.trim() !== '') {
+                    addMessage('user', userInput);
+
+                    // Check for greetings
+                    if (isGreeting(userInput)) {
+                        setTimeout(function () {
+                            addBotMessage("Hello! How can I help you?");
+                        }, 1000); // Simulate a delay for the bot response (1 second)
+                    } else {
+                        // Send user input to the server to get recommended schemes
+                        const recommendedSchemes = await getRecommendedSchemes(userInput);
+
+                        setTimeout(function () {
+                            addBotMessage(recommendedSchemes);
+                        }, 1000); // Simulate a delay for the bot response (1 second)
+                    }
+
+                    document.getElementById('user-input').value = '';
+                }
+            });
+
+            function isGreeting(userInput) {
+                const greetings = ['hi', 'hello', 'hey', 'greetings'];
+                return greetings.includes(userInput.toLowerCase());
+            }
+
+            async function getRecommendedSchemes(userInput) {
+                const response = await fetch(`/get_recommendations?user_input=${encodeURIComponent(userInput)}`);
+                const data = await response.json();
+                return data.recommended_schemes;
+            }
+
+            function addMessage(sender, content) {
+                const messageContainer = document.createElement('div');
+                messageContainer.classList.add('message', sender + '-message');
+                const strongTag = document.createElement('strong');
+                const messageText = document.createTextNode(content);
+                strongTag.appendChild(messageText);
+                messageContainer.appendChild(strongTag);
+                chatContainer.appendChild(messageContainer);
+
+                // Scroll to the bottom of the chat container
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+
+            function addBotMessage(response) {
+                const messageContainer = document.createElement('div');
+                messageContainer.classList.add('bot-message');
+                chatContainer.appendChild(messageContainer);
+
+                if (Array.isArray(response)) {
+                    response.forEach((scheme) => {
+                        const schemeContainer = document.createElement('div');
+                        schemeContainer.classList.add('scheme');
+                        const schemeTitle = document.createElement('strong');
+                        schemeTitle.textContent = scheme.name;
+                        const schemeDescription = document.createElement('p');
+                        schemeDescription.textContent = scheme.description;
+                        const eligibilityCriteria = document.createElement('p');
+                        eligibilityCriteria.textContent = 'Eligibility Criteria: ' + scheme.eligibility_criteria;
+                        const learnMoreLink = document.createElement('a');
+                        learnMoreLink.href = scheme.link;
+                        learnMoreLink.target = '_blank';
+                        learnMoreLink.textContent = 'Learn more';
+                        schemeContainer.appendChild(schemeTitle);
+                        schemeContainer.appendChild(schemeDescription);
+                        schemeContainer.appendChild(eligibilityCriteria);
+                        schemeContainer.appendChild(learnMoreLink);
+                        messageContainer.appendChild(schemeContainer);
+                    });
+                } else {
+                    const botResponse = document.createElement('p');
+                    botResponse.textContent = response;
+                    messageContainer.appendChild(botResponse);
+                }
+
+                // Scroll to the bottom of the chat container
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Add your head elements, styles, and title here -->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            background-color: #ffffff;
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile {
+            text-align: center;
+        }
+
+        .profile img {
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+        }
+
+        .edit-form {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        .edit-form a {
+            text-decoration: none;
+            color: white;
+        }
+
+        .eligibility-check-form {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+
+        .eligibility-check-form a {
+            text-decoration: none;
+            color: white;
+        }
+
+        /* Add your additional styling as needed */
+    </style>
+
+    <title>Farmers Profile</title>
+</head>
+<body>
+    <!-- Content Section -->
+    <div class="container">
+        <div class="eligibility-check-form">
+            <a href="{{ url_for('eligibility_check') }}" class="btn btn-success">Eligibility Check</a>
+        </div>
+
+        <div class="profile">
+            <div class="edit-form">
+                <a href="{{ url_for('edit_profile') }}" class="btn btn-primary">Edit</a>
+            </div>
+
+            <img src="{{ url_for('static', filename='images/farmer1.jpeg') }}" alt="Profile Image" loading="lazy"/>
+            <h4>{{ farmer.name }}</h4>
+            <p>Occupation: {{ farmer.occupation }}</p>
+            <p>State: {{ farmer.state }}</p>
+            <p>Age: {{ farmer.age }}</p>
+            <p>Gender: {{ farmer.gender }}</p>
+            <p>Caste: {{ farmer.caste }}</p>
+            <p>Has a Land: {{ farmer.has_land }}</p>
+            <p>Has Ownership: {{ farmer.has_ownership }}</p>
+            <!-- Add more fields as needed -->
+        </div>
+    </div>
+    <!-- Bootstrap JS scripts -->
+</body>
+</html>

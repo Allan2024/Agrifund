@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eligibility Check</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        h1, h2 {
+            color: #007BFF;
+        }
+
+        header {
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            border-bottom: 1px solid #ddd;
+            padding: 15px 0;
+        }
+
+        a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        p {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Eligibility Check</h1>
+    </header>
+
+    <main>
+        <h2>Farmer Information</h2>
+        <p>Name: {{ farmer.name }}</p>
+        <p>Occupation: {{ farmer.occupation }}</p>
+        <!-- Add more fields as needed -->
+
+        <h2>Recommended Schemes</h2>
+        {% if recommended_schemes %}
+            <ul>
+                {% for scheme in recommended_schemes %}
+                    <li>
+                        <strong>{{ scheme.name }}</strong>
+                        <p>Description: {{ scheme.description }}</p>
+                        <p>Eligibility Criteria: {{ scheme.eligibility_criteria }}</p>
+                        <p>Similarity: {{ scheme.similarity }}</p>
+                        <p><a href="{{ scheme.link }}" target="_blank">More info</a></p>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No recommended schemes.</p>
+        {% endif %}
+    </main>
+</body>
+</html>

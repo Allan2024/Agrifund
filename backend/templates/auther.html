@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        #auth-container {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        label {
+            margin-bottom: 8px;
+        }
+
+        input {
+            padding: 8px;
+            margin-bottom: 16px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #eligibility-inputs {
+            display: none;
+        }
+
+        #result {
+            margin-top: 16px;
+            font-weight: bold;
+        }
+
+        span.eligible {
+            color: green;
+        }
+
+        span.not-eligible {
+            color: red;
+        }
+    </style>
+    <title>Scheme Authentication</title>
+</head>
+<body>
+    <div id="auth-container">
+        <h1>Scheme Authentication</h1>
+
+        <form id="auth-form">
+            <label for="scheme-name">Scheme Name:</label>
+            <input type="text" id="scheme-name" name="scheme-name" required>
+
+            <button type="button" onclick="fetchEligibilityCriteria()">Fetch Eligibility Criteria</button>
+
+            <div id="eligibility-inputs">
+                <!-- Display farmer data here if needed -->
+
+                <!-- Remove input fields for personal identity, state, etc. -->
+
+                <button type="button" onclick="checkEligibility()">Check Eligibility</button>
+
+                <div id="result"></div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        async function fetchEligibilityCriteria() {
+            const schemeName = document.getElementById('scheme-name').value;
+
+            const response = await fetch(`/get_eligibility_criteria?scheme_name=${schemeName}`);
+            const data = await response.json();
+            const eligibilityCriteria = data.eligibility_criteria;
+
+            console.log('Eligibility Criteria:', eligibilityCriteria);
+
+            document.getElementById('eligibility-inputs').style.display = 'block';
+        }
+
+        async function checkEligibility() {
+            const farmerData = await fetch('/get_farmer_data')
+                .then(response => response.json())
+                .then(data => data);
+
+            const schemeName = document.getElementById('scheme-name').value;
+            const response = await fetch(`/get_eligibility_criteria?scheme_name=${schemeName}`);
+            const data = await response.json();
+            const eligibilityCriteria = data.eligibility_criteria;
+
+            console.log('Farmer Data:', farmerData);
+            console.log('Eligibility Criteria:', eligibilityCriteria);
+
+            const isEligible = compareEligibility(farmerData, eligibilityCriteria);
+            console.log('Is Eligible:', isEligible);
+
+            const resultContainer = document.getElementById('result');
+            resultContainer.innerHTML = isEligible ? '<span class="eligible">Eligible</span>' : '<span class="not-eligible">Not Eligible</span>';
+        }
+
+        function compareEligibility(farmerInput, eligibilityCriteria, similarityThreshold = 0.5) {
+            for (const criterion in eligibilityCriteria) {
+                const farmerValue = farmerInput[criterion];
+                const criteriaValue = eligibilityCriteria[criterion];
+
+                const similarity = calculateSimilarity(farmerValue, criteriaValue);
+                console.log(`Criterion: ${criterion}, Farmer Value: ${farmerValue}, Criteria Value: ${criteriaValue}, Similarity: ${similarity}`);
+
+                if (similarity >= similarityThreshold) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        function calculateSimilarity(value1, value2) {
+            if (!value1 || !value2) {
+                return 0;
+            }
+
+            const keywords1 = new Set(value1.toLowerCase().split(',').map(keyword => keyword.trim()));
+            const keywords2 = new Set(value2.toLowerCase().split(',').map(keyword => keyword.trim()));
+
+            const intersection = new Set([...keywords1].filter(keyword => keywords2.has(keyword)));
+            const union = new Set([...keywords1, ...keywords2]);
+
+            const similarity = intersection.size / union.size;
+            console.log(`Value 1: ${value1}, Value 2: ${value2}, Similarity: ${similarity}`);
+
+            return similarity;
+        }
+    </script>
+</body>
+</html>

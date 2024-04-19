@@ -1,0 +1,193 @@
+<!-- templates/edit_profile.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Add your head elements, styles, and title here -->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            background-color: #ffffff;
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .edit-form {
+            text-align: center;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .edit-form label {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .edit-form input, .edit-form select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .edit-form .radio-group {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .edit-form .radio-group label {
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        .edit-form .warning-bar {
+            height: 10px;
+            width: 100%;
+            background-color: green;
+            transition: background-color 0.5s ease;
+            margin-bottom: 15px;
+        }
+
+        .edit-form .btn-primary {
+            width: 100%;
+        }
+
+        /* Add your additional styling as needed */
+    </style>
+
+    <title>Edit Farmers Profile</title>
+</head>
+<body>
+    <!-- Content Section -->
+    <div class="container">
+        <div class="edit-form">
+            <!-- Warning Bar -->
+            <div class="warning-bar"></div>
+
+            <form method="POST" action="{{ url_for('update_profile') }}">
+                <label for="age">Age:</label>
+                <input type="text" id="age" name="age" value="{{ farmer.age }}" required onblur="validateAge()">
+
+                <div class="radio-group">
+                    <label for="male">Male</label>
+                    <input type="radio" id="male" name="gender" value="male" {{ 'checked' if farmer.gender == 'male' }}>
+
+                    <label for="female">Female</label>
+                    <input type="radio" id="female" name="gender" value="female" {{ 'checked' if farmer.gender == 'female' }}>
+                </div>
+
+                <label for="caste">Caste:</label>
+                <select id="caste" name="caste" required>
+                    <option value="OBC" {{ 'selected' if farmer.caste == 'OB' }}>OBC</option>
+                    <option value="SC/ST" {{ 'selected' if farmer.caste == 'SC/ST' }}>SC/ST</option>
+                    <option value="OPEN" {{ 'selected' if farmer.caste == 'OPEN' }}>OPEN</option>
+                </select>
+
+                <label for="has_land">Has a Land:</label>
+                <select id="has_land" name="has_land" required onchange="validateHasLand()">
+                    <option value="yes" {{ 'selected' if farmer.has_land == 'yes' }}>Yes</option>
+                    <option value="no" {{ 'selected' if farmer.has_land == 'no' }}>No</option>
+                </select>
+
+                <label for="has_ownership">Has Ownership:</label>
+                <select id="has_ownership" name="has_ownership" required onchange="validateHasOwnership()">
+                    <option value="yes" {{ 'selected' if farmer.has_ownership == 'yes' }}>Yes</option>
+                    <option value="no" {{ 'selected' if farmer.has_ownership == 'no' }}>No</option>
+                </select>
+
+                <input type="submit" class="btn btn-primary" value="Update Profile">
+            </form>
+        </div>
+    </div>
+    <!-- Bootstrap JS scripts -->
+    <!-- ... (previous HTML code) ... -->
+    <!-- ... (previous HTML code) ... -->
+
+    <!-- templates/edit_profile.html -->
+
+<!-- ... (previous HTML code) ... -->
+
+<script>
+    // Function to show alerts and update the warning bar
+    function showAlert(message) {
+        alert(message);
+
+        // Decrease the warning bar by 20% on each alert
+        var warningBar = document.querySelector('.warning-bar');
+        var currentWidth = parseInt(warningBar.style.width) || 100;
+        var newWidth = currentWidth - 20;
+
+        // Ensure the width doesn't go below 0
+        newWidth = Math.max(newWidth, 0);
+
+        // Change the color based on the current width
+        if (newWidth >= 80) {
+            warningBar.style.backgroundColor = 'lightgreen';
+        } else if (newWidth >= 60) {
+            warningBar.style.backgroundColor = 'orange';
+        } else if (newWidth >= 40) {
+            warningBar.style.backgroundColor = 'lightcoral';
+        } else if (newWidth >= 20) {
+            warningBar.style.backgroundColor = 'darkorange';
+        } else {
+            warningBar.style.backgroundColor = 'black';
+        }
+
+        // Animate the width change
+        warningBar.style.width = newWidth + '%';
+    }
+
+    // Function to validate age input
+    function validateAge() {
+        var ageInput = document.getElementById('age').value;
+
+        // Check if ageInput is a valid number
+        if (!/^\d+$/.test(ageInput)) {
+            showAlert('Please enter a valid number for age.');
+            return;
+        }
+
+        if (parseInt(ageInput) < 18) {
+            showAlert('It is recommended to have an age above 18.');
+        } else if (parseInt(ageInput) < 1 || parseInt(ageInput) > 100) {
+            showAlert('It is not a valid age');
+        }
+    }
+
+    // Function to validate "Has a Land" input
+    function validateHasLand() {
+        var hasLandInput = document.getElementById('has_land').value.toLowerCase();
+        if (hasLandInput === 'no') {
+            showAlert('It is recommended to have a land for certain schemes.');
+        }
+    }
+
+    // Function to validate "Has Ownership" input
+    function validateHasOwnership() {
+        var hasOwnershipInput = document.getElementById('has_ownership').value.toLowerCase();
+        if (hasOwnershipInput === 'no') {
+            showAlert('It is recommended to have ownership over a land or livestock for certain schemes.');
+        }
+    }
+</script>
+
+<!-- ... (remaining HTML code) ... -->
+
+
+</body>
+</html>

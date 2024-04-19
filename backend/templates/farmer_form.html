@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmer Input Form</title>
+
+    <!-- Use the non-module version of Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.5.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.5.0/firebase-database-compat.js"></script>
+
+    <!-- Bootstrap CSS link -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            margin-top: 50px;
+            max-width: 600px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #007bff;
+            text-align: center;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <!-- Content Section -->
+    <div class="container">
+        <h2>Farmer Input Form</h2>
+        <form id="farmerForm">
+            <div class="form-group">
+                <label for="farmer_name">Farmer Name:</label>
+                <input type="text" class="form-control" id="farmer_name" name="farmer_name" required>
+            </div>
+            <div class="form-group">
+                <label for="crop_type">Crop Type:</label>
+                <input type="text" class="form-control" id="crop_type" name="crop_type" required>
+            </div>
+            <div class="form-group">
+                <label for="personal_identity">Personal Identity:</label>
+                <input type="text" class="form-control" id="personal_identity" name="personal_identity" required>
+            </div>
+            <div class="form-group">
+                <label for="state">State:</label>
+                <input type="text" class="form-control" id="state" name="state" required>
+            </div>
+            <div class="form-group">
+                <label for="occupation">Occupation:</label>
+                <input type="text" class="form-control" id="occupation" name="occupation" required>
+            </div>
+            <div class="form-group">
+                <label for="registered_entity">Registered Entity:</label>
+                <input type="text" class="form-control" id="registered_entity" name="registered_entity" required>
+            </div>
+            <div class="form-group">
+                <label for="caste">Caste:</label>
+                <input type="text" class="form-control" id="caste" name="caste" required>
+            </div>
+            <div class="form-group">
+                <label for="age">Age:</label>
+                <input type="number" class="form-control" id="age" name="age" required>
+            </div>
+            <div class="form-group">
+                <label for="gender">Gender:</label>
+                <select class="form-control" id="gender" name="gender" required>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="land_ownership">Land Ownership:</label>
+                <select class="form-control" id="land_ownership" name="land_ownership" required>
+                    <option value="owned">Owned</option>
+                    <option value="leased">Leased</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+
+    <!-- Bootstrap JS scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.9/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        // Paste your Firebase configuration here
+        const firebaseConfig = {
+            apiKey: "AIzaSyCrM6geGXLZa5YcdOnXmCxHkggzSmFf9Lc",
+            authDomain: "major-farmer.firebaseapp.com",
+            databaseURL: "https://major-farmer-default-rtdb.firebaseio.com",
+            projectId: "major-farmer",
+            storageBucket: "major-farmer.appspot.com",
+            messagingSenderId: "911719183991",
+            appId: "1:911719183991:web:65e02a6aefe365e3c83872"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        // Initialize Realtime Database
+        const database = firebase.database();
+
+        // Wait for the DOM to fully load before attaching the event listener
+        document.addEventListener('DOMContentLoaded', function () {
+            const farmerForm = document.getElementById('farmerForm');
+
+            // Add an event listener to the form for data submission
+            farmerForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                // Proceed with form submission
+                const farmerName = document.getElementById('farmer_name').value;
+                const cropType = document.getElementById('crop_type').value;
+                const personalIdentity = document.getElementById('personal_identity').value;
+                const state = document.getElementById('state').value;
+                const occupation = document.getElementById('occupation').value;
+                const registeredEntity = document.getElementById('registered_entity').value;
+                const caste = document.getElementById('caste').value;
+                const age = document.getElementById('age').value;
+                const gender = document.getElementById('gender').value;
+                const landOwnership = document.getElementById('land_ownership').value;
+
+                // Store data in Realtime Database
+                const farmersRef = database.ref('farmers');
+                farmersRef.push({
+                    farmer_name: farmerName,
+                    crop_type: cropType,
+                    personal_identity: personalIdentity,
+                    state: state,
+                    occupation: occupation,
+                    registered_entity: registeredEntity,
+                    caste: caste,
+                    age: age,
+                    gender: gender,
+                    land_ownership: landOwnership
+                    // Add more fields as needed
+                })
+                .then(function() {
+                    console.log("Data successfully written to Realtime Database");
+                    // Handle success or redirect as needed
+                })
+                .catch(function(error) {
+                    console.error("Error writing to Realtime Database: ", error);
+                    // Handle error
+                });
+            });
+        });
+    </script>
+</body>
+</html>

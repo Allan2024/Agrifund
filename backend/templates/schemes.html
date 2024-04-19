@@ -1,0 +1,128 @@
+<!-- templates/schemes.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Other head elements -->
+
+    <!-- Add these lines to include Bootstrap and your CSS file -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <!-- Google Translate script -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({ pageLanguage: 'en' }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+    <style>
+        /* Custom styles for the navbar and profile */
+        .navbar {
+            background-color: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand img {
+            width: auto; /* Make the width auto to fit the entire navbar */
+            height: 40px; /* Set the desired height */
+            border-radius: 0; /* Make the image rectangular */
+        }
+
+        .navbar-toggler-icon {
+            background-color: #343a40;
+        }
+
+        .navbar-nav {
+            margin-left: auto;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            color: #343a40;
+        }
+
+        .profile img {
+            border-radius: 50%;
+            margin-right: 8px;
+            width: 25px;
+        }
+
+        /* Add circular image style for the Projects tab */
+        .nav-item img {
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            margin-right: 8px;
+        }
+
+        /* Add your additional styling as needed */
+    </style>
+
+    <title>Scheme List</title>
+</head>
+<body>
+    <!-- Google Translate button container -->
+    <div id="google_translate_element"></div>
+
+    <!-- Navbar code -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <a class="navbar-brand mt-2 mt-lg-0" href="#">
+                    <img src="{{ url_for('static', filename='images/farmer2.jpeg') }}" alt="Farmers Logo" loading="lazy"/>
+                </a>
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Projects
+                            <!-- Circular image for Projects tab -->
+                            <img src="{{ url_for('static', filename='images/farmer1.jpeg') }}" alt="Projects" loading="lazy"/>
+                        </a>
+                    </li>
+
+                    <!-- Add the following line for the Profile button -->
+                    <li class="nav-item">
+                        <a class="btn btn-primary" href="{{ url_for('profile') }}">Profile</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="d-flex align-items-center">
+                <!-- Add your additional elements, if any -->
+            </div>
+        </div>
+    </nav>
+
+    <!-- Content Section -->
+    <div class="container mt-4">
+        <h2>List of Schemes</h2>
+        <div class="scheme-list">
+            {% for scheme in schemes %}
+                <div class="scheme">
+                    <h4>{{ scheme.name }}</h4>
+                    <p>{{ scheme.description }}</p>
+                    <a href="{{ scheme.link }}" target="_blank">Learn more</a>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Button to go to the chatbot (index.html) -->
+        <a class="btn btn-primary mt-4" href="/chatbot">Go to Recommender</a>
+    </div>
+
+    <!-- Bootstrap JS scripts -->
+
+</body>
+</html>
